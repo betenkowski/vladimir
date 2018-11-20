@@ -31,6 +31,7 @@
            (GET "/games" [] (get-games))
            (GET "/games/:id" [id] (get-game id))
            (POST "/games" [] (create-game))
+           (POST "/games/:id/start" [id] (repo/start id))
            (GET "/games/:id/log" [id] (get-game-log id))
            (not-found "Not found"))
 
