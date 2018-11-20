@@ -3,19 +3,33 @@
             [compojure.handler :refer [api]]
             [compojure.route :refer [not-found]]
             [ring.adapter.jetty :refer [run-jetty]]
-            [ring.middleware.json :as middleware]))
+            [ring.middleware.json :as middleware]
+            [vladimir.game-repo :as repo]
+            [vladimir.util :as util]))
 
 (def show-info
   {:body {:info "All wombats play Putin!"}})
 
+(defmulti render-game :status)
+(defmethod render-game :new [game] (update game :players deref))
+(defmethod render-game :running [game] "wombat")
+
+(defn get-games []
+  {:body (util/map-values render-game @repo/games)})
+
+(defn get-game [id]
+  {:body (render-game (@repo/games id))})
+
 (defn create-game []
-  {:body {:id "wombat"}})
+  {:body (render-game (repo/create-game))})
 
 (defn get-game-log [id]
-  {:body {:id id :log ["wombat" "koala" "hedgehod"]}})
+  {:body {:id id :log ["wombat" "koala" "hedgehog"]}})
 
 (defroutes app-routes
            (GET "/" [] show-info)
+           (GET "/games" [] (get-games))
+           (GET "/games/:id" [id] (get-game id))
            (POST "/games" [] (create-game))
            (GET "/games/:id/log" [id] (get-game-log id))
            (not-found "Not found"))
