@@ -21,7 +21,7 @@
   {:body (render-game (@repo/games id))})
 
 (defn create-game []
-  {:body (render-game (repo/create-game))})
+  {:body (render-game (repo/create))})
 
 (defn get-game-log [id]
   {:body {:id id :log ["wombat" "koala" "hedgehog"]}})
